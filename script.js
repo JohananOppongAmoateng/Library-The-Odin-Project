@@ -1,92 +1,119 @@
+
+
 let theLibrary = []
 
-const container = document.getElementById("container")
-const addBook = document.createElement("button").innerText = "New Book"
-container.appendChild(addBook)
-addBook.addEventListener("click", addBooktotheLibrary(), false)
+
+const addBook = document.getElementById("addbtn")
+const newbtn = document.getElementById("newbtn")
+const popupForm = document.getElementById("popup")
+const popclose = document.getElementsByTagName("span")[0]
+
+newbtn.addEventListener("click",() => popupForm.style.display = "block")
+addBook.addEventListener("click", addBooktotheLibrary)
+popclose.addEventListener("click",() => popupForm.style.display = "none")
 
 
-function Book(title, author, pages, read) {
-    this.title = title
-    this.author = author
-    this.pages = pages
-    this.read = read
-    const info = function() {
-        return `$title by $author,$pages pages, $read `
-    }
-}
+class Book {
+    constructor(title, author, pages, read){
+        this.title = form.title.value
+        this.author = form.author.value
+        this.pages = form.pages.value + "pg" 
+        this.read = form.read.checked
 
-function createForm() {
-
-    let form = document.createElement("form");
-    form.setAttribute("id", "myForm");
-    document.body.appendChild(form);
-    let p1 = document.createElement("p")
-    form.appendChild(p1)
-    let book_title = document.createElement("input")
-    form.appendChild(book_title)
-    p1.textContent = "Title"
-    book_title.setAttribute("id", "bookTitle")
-    book_title.setAttribute("value", "the book title")
-
-    let p2 = document.createElement("p")
-    form.appendChild(p2)
-    let book_author = document.createElement("input")
-    form.appendChild(book_author)
-    p2.textContent = "Author"
-    book_author.setAttribute("id", "bookAuthor")
-    book_author.setAttribute("value", "the book author")
-
-    let p3 = document.createElement("p")
-    form.appendChild(p3)
-    let book_pages = document.createElement("input")
-    form.appendChild(book_pages)
-    p3.textContent = "Pages"
-    book_pages.setAttribute("id", "bookPages")
-    book_pages.setAttribute("value", "the book pages")
-
-    let submit = document.createElement("input")
-    form.appendChild(submit)
-    submit.setAttribute("type", "submit")
-    submit.setAttribute("id", "submit")
-    submit.setAttribute("value", "submit")
-
-
-
-}
+}}
+    
 
 function addBooktotheLibrary() {
-    createForm()
-    newbook = new Book(book_title, book_author, book_pages, read_status)
+    event.preventDefault()
+    popupForm.style.display = "none"
+    let newbook = new Book(title,author, pages,read)
     theLibrary.push(newbook)
+    setData()
+    displayBook()
+
+    form.reset()
 }
 
-function readStatusToggler() {
-    if (read_status == clicked) {
-        read_status.innerText = "Read"
-    }
-}
+ function render() {
+    const display = document.getElementById("library") 
+    const books = document.querySelectorAll(".book")  
 
-function displayBook() {
+    books.forEach(book => display.removeChild(book))
+    
     for (let index = 0; index < theLibrary.length; index++) {
-        const bookcard = document.createElement("div")
-        const title = document.createElement('p')
-        const author = document.createElement('p')
-        const pages = document.createElement('p')
-        const read_status = document.createElement("button")
+        createBooks(theLibrary[index])  
+    }    
+ } 
+ 
+ function createBooks(item) {
+    const library = document.querySelector('#library');
+    const bookDiv = document.createElement('div');
+    const titleDiv = document.createElement('div');
+    const authDiv = document.createElement('div');
+    const pageDiv = document.createElement('div');
+    const removeBtn = document.createElement('button');
+    const readBtn = document.createElement('button');
+    
+    bookDiv.classList.add('book');
+    bookDiv.setAttribute('id', theLibrary.indexOf(item));
 
-        container.appendChild(bookcard)
+    titleDiv.textContent = item.title;
+    titleDiv.classList.add('title');
+    bookDiv.appendChild(titleDiv);
 
-        bookcard.appendChild(title)
-        bookcard.appendChild(author)
-        bookcard.appendChild(pages)
-        bookcard.appendChild(read_status)
-        title.textContent = theLibrary[index].title
-        author.textContent = theLibrary[index].author
-        pages.textContent = theLibrary[index].pages
-        read_status.textContent = "Not read"
-        read_status.addEventListener("click", readStatusToggler(), false)
-        const removeBook = document.createElement("button")
-        bookcard.appendChild(removeBook)
+    authDiv.textContent = item.author;
+    authDiv.classList.add('author');
+    bookDiv.appendChild(authDiv);
+
+    pageDiv.textContent = item.pages;
+    pageDiv.classList.add('pages');
+    bookDiv.appendChild(pageDiv);
+
+    readBtn.classList.add('readBtn')    
+    bookDiv.appendChild(readBtn);
+    if(item.read===false) {
+        readBtn.textContent = 'Not Read';
+        readBtn.style.backgroundColor = '#e04f63';
+    }else {
+        readBtn.textContent = 'Read';
+        readBtn.style.backgroundColor = '#63da63'
+    }
+
+    removeBtn.textContent = 'Remove'; 
+    removeBtn.setAttribute('id', 'removeBtn');
+    bookDiv.appendChild(removeBtn);
+    
+    library.appendChild(bookDiv);
+
+    removeBtn.addEventListener('click', () => {
+        theLibrary.splice(theLibrary.indexOf(item),1);
+        setData()
+        render();
+    });
+
+    //add toggle ability to each book 'read' button on click
+    readBtn.addEventListener('click', () => { 
+        item.read = !item.read; 
+        setData(); 
+        render();
+    }); 
+};
+
+// setting Library to be stored in local storage
+function setData() {
+    localStorage.setItem(`theLibrary`, JSON.stringify(theLibrary));
+}
+
+//pulls books from local storage when page is refreshed
+function restore() {
+    if(!localStorage.theLibrary) {
+        render();
+    }else {
+        let objects = localStorage.getItem('theLibrary') // gets information from local storage to use in below loop to create DOM/display
+        objects = JSON.parse(objects);
+        theLibrary = objects;
+        render();
     }
 }
+
+restore();

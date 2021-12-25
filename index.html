@@ -5,12 +5,31 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>The Library</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div id="container"></div>
+    <div id="newbtncontainer"><button id="newbtn">+ NEW BOOK</button></div>
+    <div id="popup">
+        <form action="/script.js" id="form">
+            <span id="close">&times;</span>
+            <ledgend>NEW BOOK</ledgend>       
+            <div id="textInput">
+                <p><input type="text" name="title" id="title" placeholder="Title"></p> 
+                <p><input type="author" name="author" id="author" placeholder="Author"></p>
+                <p><input type="text" name="pages" id="pages" placeholder="Pages"></p>
+            </div>      
+            <div id="checkbox">
+                <label>READ:<input type="checkbox" name="read" id="read" value="yes"></label>
+            
+            </div>
+    
+            <button type="submit" form = "form"id="addbtn">Add</button>
+        </form>
+
+    </div>  
+    <div id="library"></div>
     <script src="script.js"></script>
 </body>
 
